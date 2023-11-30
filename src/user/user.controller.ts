@@ -1,8 +1,8 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Logger, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { Logger } from 'nestjs-pino';
+// import { Logger } from 'nestjs-pino';
 
 @Controller('user')
 export class UserController {
@@ -14,6 +14,8 @@ export class UserController {
 
   @Get()
   getUsers() {
+    this.logger.log('测试 logger');
+    this.logger.error('测试错误 logger');
     return this.userService.findAll();
   }
 
