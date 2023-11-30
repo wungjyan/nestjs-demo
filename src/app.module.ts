@@ -12,6 +12,7 @@ import { Logs } from './logs/logs.entity';
 
 // import { LoggerModule } from 'nestjs-pino';
 // import { join } from 'path';
+import { LogsModule } from './logs/logs.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
 
@@ -89,6 +90,7 @@ const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
     //   },
     // }),
     UserModule,
+    LogsModule,
   ],
   controllers: [],
   providers: [Logger],
