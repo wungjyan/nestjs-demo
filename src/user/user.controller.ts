@@ -2,12 +2,14 @@ import { Controller, Get, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { Logger } from 'nestjs-pino';
 
 @Controller('user')
 export class UserController {
   constructor(
     private configService: ConfigService,
     private userService: UserService,
+    private logger: Logger,
   ) {}
 
   @Get()
