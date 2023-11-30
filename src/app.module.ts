@@ -26,12 +26,17 @@ const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
       load: [() => dotenv.config({ path: '.env' })],
       validationSchema: Joi.object({
         DB_PORT: Joi.number().default(3306),
-        DB_HOST: Joi.string().ip(),
+        DB_HOST: Joi.alternatives().try(
+          Joi.string().ip(),
+          Joi.string().domain(),
+        ),
         DB_TYPE: Joi.string().valid('mysql'),
         DB_DATABASE: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_SYNC: Joi.boolean().default(false),
+        LOG_LEVEL: Joi.string(),
+        LOG_ON: Joi.boolean(),
       }),
     }),
     // 将配置拆出去

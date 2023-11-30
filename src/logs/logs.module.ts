@@ -14,47 +14,39 @@ const consoleTransports = new Console({
   ),
 });
 
-const dailyInfoTransports = new DailyRotateFile({
-  level: 'info',
-  dirname: 'app-logs',
-  filename: 'info-%DATE%.log',
-  datePattern: 'YYYY-MM-DD-HH',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '14d',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.simple(),
-  ),
-});
-
-const dailyWarnTransports = new DailyRotateFile({
-  level: 'warn',
-  dirname: 'app-logs',
-  filename: 'warn-%DATE%.log',
-  datePattern: 'YYYY-MM-DD-HH',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '14d',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.simple(),
-  ),
-});
+function createDailyRotateTransports(level: string, filename: string) {
+  return new DailyRotateFile({
+    level,
+    dirname: 'app-logs',
+    filename: `${filename}-%DATE%.log`,
+    datePattern: 'YYYY-MM-DD-HH',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '14d',
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.simple(),
+    ),
+  });
+}
 
 @Module({
   imports: [
     WinstonModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        ({
+      useFactory: (configService: ConfigService) => {
+        return {
           transports: [
             consoleTransports,
             ...(configService.get(LogEnum.LOG_ON)
-              ? [dailyInfoTransports, dailyWarnTransports]
+              ? [
+                  createDailyRotateTransports('info', 'application'),
+                  createDailyRotateTransports('warn', 'error'),
+                ]
               : []),
           ],
-        }) as WinstonModuleOptions,
+        } as WinstonModuleOptions;
+      },
     }),
   ],
 })
