@@ -13,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // import { LoggerModule } from 'nestjs-pino';
 // import { join } from 'path';
 import { LogsModule } from './logs/logs.module';
-import ormconfig from 'ormconfig';
+import { connectionParams } from 'ormconfig';
 
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
 
@@ -35,7 +35,7 @@ const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
       }),
     }),
     // 将配置拆出去
-    TypeOrmModule.forRoot(ormconfig),
+    TypeOrmModule.forRoot(connectionParams),
     // 固定写法，使用配置数据来填充数据库参数
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
