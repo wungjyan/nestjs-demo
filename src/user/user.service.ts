@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { getUserDto } from './interface/get-user-dto';
 
 @Injectable()
 export class UserService {
@@ -14,8 +15,32 @@ export class UserService {
     return this.userRepository.save(userTmp);
   }
 
-  findAll() {
-    return this.userRepository.find();
+  findAll(query: getUserDto) {
+    console.log(
+      '🚀 ~ file: user.service.ts:19 ~ UserService ~ findAll ~ query:',
+      query,
+    );
+    const { page, limit, username, role, gender } = query;
+    const take = limit || 10;
+    const skip = ((page || 1) - 1) * take;
+    return this.userRepository.find({
+      relations: ['profile', 'roles'],
+      select: {
+        username: true,
+        id: true,
+      },
+      where: {
+        username,
+        profile: {
+          gender,
+        },
+        roles: {
+          id: role,
+        },
+      },
+      take,
+      skip,
+    });
   }
 
   find(username: string) {

@@ -1,8 +1,17 @@
-import { Controller, Get, Inject, LoggerService, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  LoggerService,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+// import { User } from './user.entity';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { getUserDto } from './interface/get-user-dto';
 // import { Logger } from 'nestjs-pino';
 
 @Controller('user')
@@ -15,16 +24,14 @@ export class UserController {
   ) {}
 
   @Get()
-  getUsers() {
-    this.logger.log('测试 logger');
-    this.logger.error('测试错误 logger');
-    return this.userService.findAll();
+  getUsers(@Query() query: getUserDto) {
+    // query 传递过来的参数都是 string 类型
+    return this.userService.findAll(query);
   }
 
   @Post()
-  addUser() {
-    const user = { username: '汪健', password: '123456' } as User;
-    return this.userService.create(user);
+  addUser(@Body() params: any) {
+    return this.userService.create(params);
   }
 
   @Get('profile')
