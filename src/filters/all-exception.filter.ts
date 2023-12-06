@@ -4,14 +4,19 @@ import {
   Catch,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
 import * as requestIp from 'request-ip';
+import { QueryFailedError } from 'typeorm';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly httpAdapterHost: HttpAdapterHost,
+  ) {}
   catch(exception: any, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp(); // 上下文
@@ -24,6 +29,11 @@ export class AllExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    let errorMsg: string = exception['response'] || 'Internal server error';
+    if (exception instanceof QueryFailedError) {
+      errorMsg = exception.message;
+    }
+
     const responseBody = {
       headers: request.headers,
       query: request.query,
@@ -32,7 +42,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString,
       ip: requestIp.getClientIp(request),
       exception: exception.name,
-      error: exception['response'] || 'Internal server error',
+      error: errorMsg,
     };
 
     httpAdapter.reply(response, responseBody, httpStatus);
