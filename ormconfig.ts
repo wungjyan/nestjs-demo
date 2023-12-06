@@ -27,7 +27,8 @@ function buildConnectionOptions() {
     database: config[ConfigEnum.DB_DATABASE],
     entities: [__dirname + '/**/*.entity{.js,.ts}'],
     synchronize: config[ConfigEnum.DB_SYNC],
-    logging: ['error'],
+    // logging: ['error'],
+    logging: process.env.NODE_ENV === 'development',
   } as TypeOrmModuleOptions;
 }
 
