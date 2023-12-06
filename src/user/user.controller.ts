@@ -7,6 +7,8 @@ import {
   Post,
   Query,
   UseFilters,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
@@ -40,5 +42,19 @@ export class UserController {
   @Get('profile')
   getProfile() {
     return this.userService.findProfile(2);
+  }
+
+  @Get('/:id')
+  getUserById(@Param('id') id: number) {
+    console.log(
+      '🚀 ~ file: user.controller.ts:49 ~ UserController ~ getUserById ~ params:',
+      id,
+    );
+    return this.userService.findOne(id);
+  }
+
+  @Delete('/:id')
+  removeUser(@Param('id') id: number) {
+    return this.userService.remove(id);
   }
 }

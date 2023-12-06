@@ -59,8 +59,12 @@ export class UserService {
     return newQuery.take(take).skip(skip).getMany();
   }
 
-  find(username: string) {
-    return this.userRepository.findOne({ where: { username } });
+  // find(username: string) {
+  //   return this.userRepository.findOne({ where: { username } });
+  // }
+
+  findOne(id: number) {
+    return this.userRepository.findOne({ where: { id } });
   }
 
   findProfile(id: number) {
@@ -68,5 +72,10 @@ export class UserService {
       where: { id },
       relations: { profile: true },
     });
+  }
+
+  async remove(id: number) {
+    const user = await this.findOne(id);
+    return this.userRepository.remove(user);
   }
 }
