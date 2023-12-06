@@ -6,15 +6,18 @@ import {
   LoggerService,
   Post,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
 // import { User } from './user.entity';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { getUserDto } from './interface/get-user-dto';
+import { TypeormFilter } from 'src/filters/typeorm.filter';
 // import { Logger } from 'nestjs-pino';
 
 @Controller('user')
+@UseFilters(new TypeormFilter())
 export class UserController {
   constructor(
     private configService: ConfigService,
